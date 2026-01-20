@@ -157,11 +157,12 @@ def analyze_and_save_distribution(file_path: str, output_json_path: str = None) 
 # 主要执行函数
 def main():
     # 设置文件路径
-    input_file = "/mnt/nvme0/home/chenyunling/test/init/qwen_sharegpt_log.txt"
+    dir_t= "/sharenvme/usershome/cyl/test/model/Isotonic/smol_llama-4x220M-MoE"
+    input_file =dir_t+"/rank_experts_log.txt"
     
     # 可选: 指定输出JSON文件路径
     # output_file = "qwen_rank_expert_distribution.json"
-    output_file = None  # 自动生成文件名
+    output_file = dir_t+"/rank_experts_distribution.json"  
     
     # 检查文件是否存在
     if not os.path.exists(input_file):
