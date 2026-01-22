@@ -157,7 +157,7 @@ def analyze_and_save_distribution(file_path: str, output_json_path: str = None) 
 # 主要执行函数
 def main():
     # 设置文件路径
-    dir_t= "/sharenvme/usershome/cyl/test/model/Isotonic/smol_llama-4x220M-MoE"
+    dir_t= "/sharenvme/usershome/cyl/test/model/mistralai/Mixtral-8x7B-Instruct-v0.1"
     input_file =dir_t+"/rank_experts_log.txt"
     
     # 可选: 指定输出JSON文件路径
