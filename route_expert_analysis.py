@@ -50,11 +50,17 @@ class RouteExpertAnalyzer:
 
     
     def get_route_distribution(self, key) -> Optional[Dict[str, Any]]:
-
+        re=[]
         key_str = str(key)
+        topk=2
         if key_str in self.route_distributions:
-            return self.route_distributions[key_str]
-        return None
+            # print(self.route_distributions[key_str])
+            for key in self.route_distributions[key_str]:
+                re.append(key)
+                if len(re)>=topk:
+                    break
+
+        return re
     
   
     
