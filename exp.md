@@ -17,3 +17,7 @@
 
 ## route_expert_analysis.py
 对 route_experts_distribution.json 的实际运用
+
+# setup.py 
+用c编写多线程读取文件绕过python GIL
+python setup.py build_ext --inplace
