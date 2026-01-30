@@ -21,3 +21,12 @@
 # setup.py 
 用c编写多线程读取文件绕过python GIL
 python setup.py build_ext --inplace
+
+
+
+# analysis-acc.py
+export HF_ENDPOINT=https://hf-mirror.com
+pip install lm-eval
+pip install langdetect
+pip install immutabledict
+pip install unitxt

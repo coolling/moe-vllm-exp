@@ -126,7 +126,7 @@ single_buffer_worker(void* arg)
     clock_gettime(CLOCK_MONOTONIC, &end);
     long long total_elapsed_us = (end.tv_sec - start.tv_sec) * 1000000LL +
                                  (end.tv_nsec - start.tv_nsec) / 1000;
-    fprintf(stderr, "[Thread on CPU %d] read time: %lld us\n", a->cpu_id, total_elapsed_us);
+    // fprintf(stderr, "[Thread on CPU %d] read time: %lld us\n", a->cpu_id, total_elapsed_us);
     return NULL;
 }
 
@@ -334,7 +334,7 @@ static PyObject* parallel_read_and_parse(PyObject* self, PyObject* args) {
     clock_gettime(CLOCK_MONOTONIC, &end);
     long long total_elapsed_us = (end.tv_sec - start.tv_sec) * 1000000LL +
                                  (end.tv_nsec - start.tv_nsec) / 1000;
-    fprintf(stderr, "[Main] Total parallel read time: %lld us\n", total_elapsed_us);
+    // fprintf(stderr, "[Main] Total parallel read time: %lld us\n", total_elapsed_us);
 
     bool any_fail = false;
     for (int w = 0; w < workers; w++) {
