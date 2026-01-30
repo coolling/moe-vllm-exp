@@ -30,3 +30,4 @@ pip install lm-eval
 pip install langdetect
 pip install immutabledict
 pip install unitxt
+pip install -e human-eval

@@ -107,18 +107,21 @@ class VLLMSequential(LM):
     def generate_until(self, requests: List[Instance]) -> List[str]:
         res = []
         for instance in requests:
+            print(gen_kwargs.get("max_gen_toks", 500))
             prompt, gen_kwargs = instance.args  # ✅ 提取 (str, dict)
-            print(prompt, gen_kwargs)
+            # print(prompt, gen_kwargs)
             # 你的生成逻辑...
             sampling_params = SamplingParams(
                 temperature=gen_kwargs.get("temperature", 0.0),
                 top_p=gen_kwargs.get("top_p", 1.0),
-                max_tokens=gen_kwargs.get("max_gen_toks", 256),
-                stop=gen_kwargs.get("until", None),
-                detokenize=True,
+                max_tokens=gen_kwargs.get("max_gen_toks", 500),
+                # stop=gen_kwargs.get("until", None),
+                # detokenize=True,
             )
             output = self.llm.generate([prompt], sampling_params, use_tqdm=False)[0]
+            print(output)
             generated_text = output.outputs[0].text
+            print(generated_text)
             res.append(generated_text)
         
         return res
@@ -138,9 +141,9 @@ def main():
 
     # 论文中的 8 个 zero-shot 任务
     TASKS = [
-    "gsm8k",      # 主力任务（必做）
-    "mbpp",       # 进阶验证（可选）
-    "ifeval", # 代码场景验证（可选）
+    "gsm8k",      
+    "mbpp",       
+    "ifeval", 
     "xsum", 
     "cnn_dailymail"
 ]
@@ -158,7 +161,7 @@ def main():
         tasks=TASKS,
         num_fewshot=0,       # ⭐ Zero-shot
         # batch_size=1,        # 虽然设为1，但我们内部已逐条处理
-        limit=1,          # 评估完整数据集；测试时可设为 10
+        limit=50,          # 评估完整数据集；测试时可设为 10
         log_samples=False,
         confirm_run_unsafe_code=True,
         # use_cache=False      # 不缓存结果（避免污染）
@@ -176,7 +179,7 @@ def main():
 
     for task in TASKS:
         task_result = results["results"].get(task, {})
-        
+        print(task_result)
         score = None
         metric_name = "unknown"
 
@@ -201,10 +204,16 @@ def main():
                 
         elif task in ["xsum", "cnn_dailymail"]:
             if "rouge,none" in task_result:
-                rouge_dict = task_result["rouge,none"]
-                # 通常用 rouge1 作为代表
-                score = rouge_dict.get("rouge1", 0.0)
-                metric_name = "rouge1"
+                rouge_val = task_result["rouge,none"]
+                if isinstance(rouge_val, dict):
+                    score = rouge_val.get("rouge1", 0.0)
+                    metric_name = "ROUGE-1"
+                else:
+                    # Assume it's already the ROUGE-1 score (common in lm-eval)
+                    score = rouge_val
+                    metric_name = "ROUGE-1"
+            else:
+                score = None
                 
         else:
             # 通用 fallback（如 acc,none 等）
