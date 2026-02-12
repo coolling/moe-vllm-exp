@@ -5,6 +5,7 @@
 """
 
 import os
+import time
 from typing import List, Tuple, Any
 from vllm import LLM, SamplingParams
 from lm_eval.api.model import LM
@@ -12,6 +13,7 @@ from lm_eval.api.registry import register_model
 from lm_eval import evaluator, tasks
 from lm_eval.api.instance import Instance
 import psutil
+os.environ["NLTK_DATA"] = "/sharenvme/usershome/cyl/nltk_data/"
 BIND_CPUS = [40, 41,42,43,44,45,46,47,48,49,50,51]  
 # 方式1：用psutil（跨平台，Windows/Linux/Mac都支持，推荐）
 if BIND_CPUS:
@@ -20,6 +22,7 @@ if BIND_CPUS:
     print(f"已绑定当前评测进程到CPU核心：{BIND_CPUS}")
 os.environ["HF_ALLOW_CODE_EVAL"] = "1"
 os.environ["VLLM_CPU_KVCACHE_SPACE"] = "10"
+elapsed_ms=0
 # os.environ["VLLM_CPU_OMP_THREADS_BIND"] = "40-51"
 # ==============================
 # 1. 自定义 LM 类：强制逐条处理
@@ -105,10 +108,13 @@ class VLLMSequential(LM):
         return res
 
     def generate_until(self, requests: List[Instance]) -> List[str]:
+        global elapsed_ms
         res = []
+        start=time.time()
         for instance in requests:
-            print(gen_kwargs.get("max_gen_toks", 500))
+            
             prompt, gen_kwargs = instance.args  # ✅ 提取 (str, dict)
+            print(gen_kwargs.get("max_gen_toks", 500))
             # print(prompt, gen_kwargs)
             # 你的生成逻辑...
             sampling_params = SamplingParams(
@@ -119,10 +125,11 @@ class VLLMSequential(LM):
                 # detokenize=True,
             )
             output = self.llm.generate([prompt], sampling_params, use_tqdm=False)[0]
-            print(output)
+            # print(output)
             generated_text = output.outputs[0].text
             print(generated_text)
             res.append(generated_text)
+        elapsed_ms += (time.time() - start) * 1000
         
         return res
 
@@ -141,8 +148,9 @@ def main():
 
     # 论文中的 8 个 zero-shot 任务
     TASKS = [
+    "humaneval",  
     "gsm8k",      
-    "mbpp",       
+    
     "ifeval", 
     "xsum", 
     "cnn_dailymail"
@@ -161,7 +169,7 @@ def main():
         tasks=TASKS,
         num_fewshot=0,       # ⭐ Zero-shot
         # batch_size=1,        # 虽然设为1，但我们内部已逐条处理
-        limit=50,          # 评估完整数据集；测试时可设为 10
+        limit=100,          # 评估完整数据集；测试时可设为 10
         log_samples=False,
         confirm_run_unsafe_code=True,
         # use_cache=False      # 不缓存结果（避免污染）
@@ -192,10 +200,6 @@ def main():
                 score = task_result["exact_match,strict-match"]
                 metric_name = "exact_match (strict)"
                 
-        elif task == "mbpp":
-            if "pass_at_1,none" in task_result:
-                score = task_result["pass_at_1,none"]
-                metric_name = "pass@1"
                 
         elif task == "ifeval":
             if "prompt_level_strict_acc,none" in task_result:
@@ -215,9 +219,61 @@ def main():
             else:
                 score = None
                 
+        elif task == "humaneval":
+            # HumanEval任务
+            if "pass@1,none" in task_result:
+                score = task_result["pass@1,none"]
+                metric_name = "pass@1"
+            elif "pass@1" in task_result:
+                score = task_result["pass@1"]
+                metric_name = "pass@1"
+            # 也可以考虑显示多个pass@k指标
+            elif any(key.startswith("pass@") for key in task_result.keys()):
+                pass_metrics = {k.split(",")[0]: v for k, v in task_result.items() 
+                            if k.startswith("pass@")}
+                # 选择pass@1作为主要显示指标
+                if "pass@1" in pass_metrics:
+                    score = pass_metrics["pass@1"]
+                    metric_name = "pass@1"
+                    
+        elif task in ["naturalqs", "naturalqs_closed", "naturalqs_open"]:
+            # NaturalQs任务
+            priority_metrics = [
+                "exact_match,none",
+                "f1,none",
+                "acc,none",
+                "em,none"
+            ]
+            for metric in priority_metrics:
+                if metric in task_result:
+                    score = task_result[metric]
+                    metric_name = metric.split(",")[0]
+                    break
+            
+            # 处理嵌套指标
+            if score is None:
+                for key, value in task_result.items():
+                    if isinstance(value, dict):
+                        if "exact_match" in value:
+                            score = value["exact_match"]
+                            metric_name = "exact_match"
+                            break
+                        elif "f1" in value:
+                            score = value["f1"]
+                            metric_name = "f1"
+                            break
+                            
         else:
             # 通用 fallback（如 acc,none 等）
-            for key in ["exact_match,none", "acc,none", "acc_norm,none"]:
+            priority_order = [
+                "exact_match,none",
+                "acc,none", 
+                "acc_norm,none",
+                "bleu,none",
+                "rouge1,none",
+                "f1,none"
+            ]
+            for key in priority_order:
                 if key in task_result:
                     score = task_result[key]
                     metric_name = key.split(",")[0]
@@ -243,9 +299,9 @@ def main():
     with open("eval_results.txt", "w") as f:
         f.write(f"Model: {MODEL_NAME}\n")
         f.write(f"Average: {avg_score:.2f}\n")
-        for name, score in zip(task_names, task_scores):
+        for name, score in zip(valid_tasks, task_scores):
             f.write(f"{name}: {score:.2f}\n")
 
-
+    print(f"elapsed_ms {elapsed_ms:.2f} ms")
 if __name__ == "__main__":
     main()

@@ -1,0 +1,7 @@
+Model: /sharenvme/usershome/cyl/test/model/mistralai/Mixtral-8x7B-Instruct-v0.1
+Average: 31.43
+humaneval: 53.00
+gsm8k: 35.00
+ifeval: 43.00
+xsum: 9.75
+cnn_dailymail: 16.40

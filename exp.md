@@ -31,3 +31,15 @@ pip install langdetect
 pip install immutabledict
 pip install unitxt
 pip install -e human-eval
+1. 修改# coolling to set
+2. 修改b
+
+
+(15变为预测算法实验)
+(2变为0实验)
+(0变为给qwen输出r：e文件)
+(9变为7)
+3   15   5
+0    9   2
+4
+15-q 

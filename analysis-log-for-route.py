@@ -3,8 +3,9 @@ import json
 import os
 from collections import Counter, defaultdict
 from typing import Dict, List, Tuple, Any
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
+t=5
 def plot_basic_bar(sorted_items, top_n=200):
     """
     绘制基础的条形图
@@ -124,7 +125,7 @@ def extract_rank_expert_distribution(file_path: str) -> Dict[str, Any]:
 
 
     # print(len(res)-c)
-    # print(total_pairs)
+    print(total_pairs)
     # sorted_items = sorted(res.items(), key=lambda x: x[1], reverse=True)
     # print("按值从大到小排序，取前10:")
     # plot_basic_bar(sorted_items)
@@ -132,19 +133,26 @@ def extract_rank_expert_distribution(file_path: str) -> Dict[str, Any]:
     # import time
     # start=time.time()
     pattern_counter = defaultdict(Counter)
+    print(len(res))
+    ci=0
     for key ,value in res.items():
         rank_groups = defaultdict(list)
         for rank, expert in key:
             rank_groups[rank].append(expert)
         sorted_ranks = sorted(rank_groups.keys())
-        for i in range(len(sorted_ranks) - 2):
-            rank1 = sorted_ranks[i]
-            rank2 = sorted_ranks[i + 1]
-            rank3 = sorted_ranks[i + 2]
-            key=(rank1, tuple(rank_groups[rank1]), rank2, tuple(rank_groups[rank2]))
-            # print(key)
-            for exp in rank_groups[rank3]:
-                pattern_counter[str(key)][exp]+=1
+        for i in range(len(sorted_ranks) - t):
+            key_parts = []
+            for j in range(t):
+                current_rank = sorted_ranks[i + j]
+                key_parts.append(current_rank)
+                key_parts.append(tuple(rank_groups[current_rank]))
+            key = tuple(key_parts)
+            rank6 = sorted_ranks[i + t]
+            for exp in rank_groups[rank6]:
+                pattern_counter[str(key)][exp]+=value
+                if pattern_counter[str(key)][exp]==1:
+                    ci+=1
+    print("ci",ci)
             # return
     # elapsed_ms = (time.time() - start) * 1000
     # print(f"[manager.release_current_layer() {elapsed_ms:.2f} ms")
@@ -153,8 +161,8 @@ def extract_rank_expert_distribution(file_path: str) -> Dict[str, Any]:
         # 使用 most_common() 方法直接获得排序后的列表
         sorted_items = counter.most_common()  # 默认按值降序
         sorted_pattern_counter[pattern] = dict(sorted_items)
-    k=(0, (2, 3), 1, (0, 1))
-    print(sorted_pattern_counter[str(k)])
+    # k=(0, (2, 3), 1, (0, 1))
+    # print(sorted_pattern_counter[str(k)])
     return sorted_pattern_counter
 
 def save_distribution_to_json(distribution_data: Dict[str, Any], output_path: str = None) -> str:
@@ -180,7 +188,7 @@ def save_distribution_to_json(distribution_data: Dict[str, Any], output_path: st
             json.dump(distribution_data, f, indent=2, ensure_ascii=False)
         
         print(f"✓ 数据已保存到: {output_path}")
-        print(f"  文件大小: {os.path.getsize(output_path) / 1024:.2f} KB")
+        print(f"  文件大小: {os.path.getsize(output_path) / 1024/1024:.2f} MB")
         
         return output_path
         
@@ -215,12 +223,13 @@ def analyze_and_save_distribution(file_path: str, output_json_path: str = None) 
 # 主要执行函数
 def main():
     # 设置文件路径
-    dir_t= "/sharenvme/usershome/cyl/test"
+    # dir_t= "/sharenvme/usershome/cyl/test/model/mistralai/Mixtral-8x7B-Instruct-v0.1"
+    dir_t="/sharenvme/usershome/cyl/test/init-c/output"
     input_file =dir_t+"/rank_experts_log.txt"
     
     # 可选: 指定输出JSON文件路径
     # output_file = "qwen_rank_expert_distribution.json"
-    output_file = dir_t+"/route_experts_distribution.json"  
+    output_file = dir_t+"/route_experts_distribution-"+str(t)+".json"  
     
     # 检查文件是否存在
     if not os.path.exists(input_file):
