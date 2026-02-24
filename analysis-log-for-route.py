@@ -5,7 +5,7 @@ from collections import Counter, defaultdict
 from typing import Dict, List, Tuple, Any
 # import matplotlib.pyplot as plt
 import numpy as np
-t=5
+t=2
 def plot_basic_bar(sorted_items, top_n=200):
     """
     绘制基础的条形图
@@ -224,7 +224,7 @@ def analyze_and_save_distribution(file_path: str, output_json_path: str = None) 
 def main():
     # 设置文件路径
     # dir_t= "/sharenvme/usershome/cyl/test/model/mistralai/Mixtral-8x7B-Instruct-v0.1"
-    dir_t="/sharenvme/usershome/cyl/test/init-c/output"
+    dir_t="/sharenvme/usershome/cyl/test/model/Qwen/Qwen1.5-MoE-A2.7B"
     input_file =dir_t+"/rank_experts_log.txt"
     
     # 可选: 指定输出JSON文件路径
