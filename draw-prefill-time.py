@@ -87,13 +87,27 @@ if __name__ == "__main__":
     
     # 1. 输入文件路径列表（支持任意数量txt文件，可直接添加/删除路径，适配多条曲线绘制）
     file_paths = [
-        # "/sharenvme/usershome/cyl/test/prefill_data/prefill_log_nocache_sort_maxsize=2_m.txt","/sharenvme/usershome/cyl/test/prefill_data/prefill_log_nocache_sort_re_maxsize=1_m.txt.txt",
+        # 总体
+        "/sharenvme/usershome/cyl/test/prefill_data/prefill_init_m.txt",
+        "/sharenvme/usershome/cyl/test/prefill_data/prefill_ondemand_m.txt"   ,  # 第二条曲线对应文件
+        "/sharenvme/usershome/cyl/test/prefill_data/prefill_layerwise_m.txt",  # 第一条曲线对应文件
+        "/sharenvme/usershome/cyl/test/prefill_data/prefill_cache_m.txt",
+        "/sharenvme/usershome/cyl/test/prefill_data/prefill_moevllm_cache_2_m.txt",
         
-        # "/sharenvme/usershome/cyl/test/prefill_data/prefill_layerwise_m.txt",  # 第一条曲线对应文件
-        # "/sharenvme/usershome/cyl/test/prefill_data/prefill_ondemand_m.txt"   ,  # 第二条曲线对应文件
-        # "/sharenvme/usershome/cyl/test/prefill_data/prefill_moevllm_cache_2_m.txt",
-        # "/sharenvme/usershome/cyl/test/prefill_data/prefill_init_m.txt",
-        # "/sharenvme/usershome/cyl/test/prefill_data/prefill_cache_m.txt",
+        "/sharenvme/usershome/cyl/test/prefill_data/prefill_init_q.txt",
+        "/sharenvme/usershome/cyl/test/prefill_data/prefill_ondemand_q.txt",
+        "/sharenvme/usershome/cyl/test/prefill_data/prefill_layerwise_q.txt",
+        "/sharenvme/usershome/cyl/test/prefill_data/prefill_cache_q.txt",
+        "/sharenvme/usershome/cyl/test/prefill_data/prefill_moevllm_cache_15_q.txt"
+        
+        # "/sharenvme/usershome/cyl/test/prefill_data/prefill_log_nocache_sort_maxsize=2_m.txt",
+        # "/sharenvme/usershome/cyl/test/prefill_data/prefill_log_nocache_sort_re_maxsize=1_m.txt.txt",
+        
+        
+        
+        
+        
+        
         # "/sharenvme/usershome/cyl/test/prefill_log.txt",
         # "/sharenvme/usershome/cyl/test/prefill_data/prefill_cache_0_m.txt",
         # "/sharenvme/usershome/cyl/test/prefill_data/prefill_cache_1_m.txt",
@@ -101,13 +115,10 @@ if __name__ == "__main__":
         # "/sharenvme/usershome/cyl/test/prefill_data/prefill_cache_4_m.txt",
         # "/sharenvme/usershome/cyl/test/prefill_data/prefill_cache_5_m.txt",
         
-        # "/sharenvme/usershome/cyl/test/prefill_data/prefill_ondemand_q.txt",
-        # "/sharenvme/usershome/cyl/test/prefill_data/prefill_layerwise_q.txt",
-        # "/sharenvme/usershome/cyl/test/prefill_data/prefill_cache_q.txt",
-        # "/sharenvme/usershome/cyl/test/prefill_data/prefill_moevllm_cache_15_q.txt"
         
-        "/sharenvme/usershome/cyl/test/prefill_data/prefill_layerwise_q.txt",
-        "/sharenvme/usershome/cyl/test/prefill_data/重排实验：prefill_log_nocache_sort_maxsize=2_q.txt",
+        
+        # "/sharenvme/usershome/cyl/test/prefill_data/prefill_layerwise_q.txt",
+        # "/sharenvme/usershome/cyl/test/prefill_data/重排实验：prefill_log_nocache_sort_maxsize=2_q.txt",
     ]
     
     # 2. 批量处理所有txt文件，存储每条曲线的长度和平均时间数据
