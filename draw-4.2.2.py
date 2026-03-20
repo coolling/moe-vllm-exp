@@ -50,7 +50,7 @@ def plot_bar(x, y, title, filename, color):
     # ax.set_ylim(0, 35)
     
     # ax.set_title(title, fontsize=16)
-    ax.grid(axis='y', linestyle='--', alpha=0.7)
+    # ax.grid(axis='y', linestyle='--', alpha=0.7)
     
     fig.tight_layout()
     plt.savefig(filename, format='pdf', bbox_inches='tight')
@@ -63,10 +63,10 @@ def plot_bar_png(x, y, title, filename, color):
     ax.set_xlabel('Expert ID', fontsize=29)
     
     # 核心学术技巧：固定 Y 轴上限，凸显局部倾斜的视觉落差
-    # ax.set_ylim(0, 35)
+    ax.set_ylim(0, 35)
     
     # ax.set_title(title, fontsize=16)
-    ax.grid(axis='y', linestyle='--', alpha=0.7)
+    # ax.grid(axis='y', linestyle='--', alpha=0.7)
     
     fig.tight_layout()
     plt.savefig(filename,  bbox_inches='tight')

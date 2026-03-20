@@ -111,8 +111,14 @@ def extract_rank_expert_distribution(file_path: str) -> Dict[str, Any]:
                     else:
                         is_start=True
                         # res.append(re_t)
-                        res[tuple(re_t)]+=1
-                        total_pairs += 1
+                        
+                        if(len(re_t)>96):
+                            qqq=1
+                        else:
+                            print(re_t)
+                        
+                            res[tuple(re_t)]+=1
+                            total_pairs += 1
                         # print(res)
                         # return
                         re_t=[]
@@ -157,10 +163,31 @@ def extract_rank_expert_distribution(file_path: str) -> Dict[str, Any]:
     # elapsed_ms = (time.time() - start) * 1000
     # print(f"[manager.release_current_layer() {elapsed_ms:.2f} ms")
     sorted_pattern_counter = {}
-    for pattern, counter in pattern_counter.items():
-        # 使用 most_common() 方法直接获得排序后的列表
-        sorted_items = counter.most_common()  # 默认按值降序
+    # for pattern, counter in pattern_counter.items():
+    #     # 使用 most_common() 方法直接获得排序后的列表
+    #     sorted_items = counter.most_common()  # 默认按值降序
+    #     sorted_pattern_counter[pattern] = dict(sorted_items)
+    #     print(sorted_pattern_counter[pattern])
+    sorted_patterns = sorted(
+        pattern_counter.items(), 
+        key=lambda x: (len(x[1]), sum(x[1].values())), 
+        reverse=True
+    )
+
+    # 此时 sorted_patterns 是一个 list，元素为 (pattern, counter)
+    ccc=0
+    for pattern, counter in sorted_patterns:
+        # 内部依然按你之前的逻辑：专家按出现频次降序
+        sorted_items = counter.most_common()
         sorted_pattern_counter[pattern] = dict(sorted_items)
+        
+        # 打印结果查看排序效果
+        print(f"Pattern: {pattern}")
+        print(f"专家种类数: {len(counter)}, 总激活次数: {sum(counter.values())}")
+        print(f"分布详情: {sorted_pattern_counter[pattern]}\n")
+        ccc+=1
+        if ccc >10 :
+            break
     # k=(0, (2, 3), 1, (0, 1))
     # print(sorted_pattern_counter[str(k)])
     return sorted_pattern_counter

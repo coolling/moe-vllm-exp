@@ -6,7 +6,7 @@ expert_ids = np.arange(8)
 token_counts = np.array([14, 7, 58, 13, 18, 74, 68, 18])
 
 # 全局排版参数（大字体，适合论文）
-plt.rcParams.update({'font.size': 14, 'font.family': 'serif'})
+plt.rcParams.update({'font.size': 20, 'font.family': 'serif'})
 
 fig, ax = plt.subplots(figsize=(7, 4.5))
 
@@ -20,8 +20,8 @@ edges = ['#D98C46']
 bars = ax.bar(expert_ids, token_counts, color=colors, edgecolor='black', width=0.6)
 
 # 坐标轴设置
-ax.set_xlabel('Expert ID', fontsize=16)
-ax.set_ylabel('Assigned Tokens (Load)', fontsize=16)
+ax.set_xlabel('Expert ID', fontsize=20)
+ax.set_ylabel('Assigned Tokens', fontsize=20)
 ax.set_xticks(expert_ids)
 
 # # 在柱子上标注具体数值（让评委直观看到 7 和 74 的巨大落差）
@@ -32,7 +32,7 @@ ax.set_xticks(expert_ids)
 
 
 
-ax.grid(axis='y', linestyle='--', alpha=0.6)
+# ax.grid(axis='y', linestyle='--', alpha=0.6)
 
 fig.tight_layout()
 plt.savefig('4_2_3_prefill_load_imbalance.pdf', format='pdf', bbox_inches='tight')
